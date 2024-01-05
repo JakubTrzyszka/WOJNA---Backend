@@ -1,0 +1,113 @@
+from itertools import product
+import random
+
+colors = ['diamonds', 'clubs', 'hearts', 'spades']
+figures = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+cards = {}
+id = 1
+
+for figure, color in product(figures, colors):
+    card_name = f'{figure} of {color}'
+    cards[id] = card_name
+    id += 1
+
+print(cards)
+
+
+def shuffle(cards):
+    shuffled_keys = list(cards.keys())
+    random.shuffle(shuffled_keys)
+    cards={key: cards[key] for key in shuffled_keys}
+    return cards
+
+
+
+
+def deal(cards):
+    deck_1=[]
+    deck_2=[]
+    for key, value in cards.items():
+        if key%2==0:
+            deck_2.append(value)
+        else:
+            deck_1.append(value)
+    return deck_1, deck_2
+
+
+def rules(deck_1, deck_2):
+    print(f'P1 cards - {len(deck_1)}')
+    print(f'P2 cards - {len(deck_2)}')
+    move=0
+    force = {'2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7, '9': 8, '10': 9, 'J': 10, 'Q': 11, 'K': 12, 'A': 13}
+    while len(deck_1) != 0 and len(deck_2) != 0:
+        if(len(deck_1) != 0 and len(deck_2) != 0):
+            move+=1
+            
+            deck_1_pop = deck_1.pop(0)
+            deck_2_pop = deck_2.pop(0)
+            card_value1 = deck_1_pop.split()[0]  # Pobierz nazwę karty z deck_1_pop
+            card_value2 = deck_2_pop.split()[0]  # Pobierz nazwę karty z deck_2_pop
+        else:
+            print(f'gg in {move} moves')
+            return
+        if force[card_value1] > force[card_value2]:
+            deck_1.append(deck_1_pop)
+            deck_1.append(deck_2_pop)
+            print(f'P1 cards - {len(deck_1)}')
+            print(f'P2 cards - {len(deck_2)}')
+
+            
+        elif force[card_value1] < force[card_value2]:
+            deck_2.append(deck_2_pop)
+            deck_2.append(deck_1_pop)
+            print(f'P1 cards - {len(deck_1)}')
+            print(f'P2 cards - {len(deck_2)}')
+           
+        else:
+            list_cards = [deck_1_pop, deck_2_pop]
+            while force[card_value1] == force[card_value2]:
+                if (len(deck_1) != 0 and len(deck_2) != 0):
+                    move+=1
+                    
+                    deck_1_war_pop = deck_1.pop(0)
+                    deck_2_war_pop = deck_2.pop(0)
+                    list_cards.append(deck_1_war_pop)
+                    list_cards.append(deck_2_war_pop)
+                else:
+                    print(f'gg in {move} moves')
+                    return
+                if(len(deck_1) != 0 and len(deck_2) != 0):
+                    move+=1
+                    
+                    deck_1_pop = deck_1.pop(0)
+                    deck_2_pop = deck_2.pop(0)
+                    card_value1 = deck_1_pop.split()[0]  # Pobierz nazwę karty z deck_1_pop
+                    card_value2 = deck_2_pop.split()[0]  # Pobierz nazwę karty z deck_2_pop
+                    list_cards.append(deck_1_pop)
+                    list_cards.append(deck_2_pop)
+                else:
+                    print(f'gg in {move} moves')
+                    return
+            else:
+                if force[card_value1] > force[card_value2]:
+                    deck_1 += list_cards
+                    print(f'P1 cards - {len(deck_1)}')
+                    print(f'P2 cards - {len(deck_2)}')
+                elif force[card_value1] < force[card_value2]:
+                    deck_2 += list_cards
+                    print(f'P1 cards - {len(deck_1)}')
+                    print(f'P2 cards - {len(deck_2)}')
+    else:
+        print(f'gg in {move} moves')
+    return
+                
+def war(cards):
+    cards=shuffle(cards)
+    print('Cards shuffled')
+    deck_1, deck_2 = deal(cards)
+    print('Cards dealt')
+    game=rules(deck_1, deck_2)
+    return game
+
+war(cards)
+
